@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Music</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22d3ee;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", "Noto Sans", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, #0b1220, #0f172a 50%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 900px; margin: 40px auto; padding: 0 16px;
+    }
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    h1 { font-size: 28px; margin: 0; letter-spacing: 0.3px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+
+    .toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .search {
+      flex: 1 1 260px;
+      padding: 10px 12px;
+      border-radius: 12px; border: 1px solid var(--border);
+      background: #0b1220; color: var(--text);
+      outline: none;
+    }
+    .count { font-size: 13px; color: var(--muted); align-self: center; }
+
+    ul#musicList { list-style: none; padding: 0; margin: 0; }
+    li.track {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+      padding: 12px; border-radius: 12px; border: 1px solid var(--border);
+    }
+    li.track + li.track { margin-top: 10px; }
+
+    .meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .actions { display: flex; gap: 8px; align-items: center; }
+    button {
+      background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 10px; cursor: pointer; font-weight: 600;
+    }
+    button:hover { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,.15); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    audio { width: 280px; max-width: 50vw; }
+    footer { margin-top: 18px; font-size: 12px; color: var(--muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M9 18V5l10-2v13" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="7" cy="18" r="3" stroke="#22d3ee" stroke-width="1.5"/>
+        <circle cx="17" cy="16" r="3" stroke="#22d3ee" stroke-width="1.5"/>
+      </svg>
+      <h1>My Music</h1>
+    </header>
+
+    <div class="card">
+      <div class="toolbar">
+        <input id="q" class="search" type="search" placeholder="Search music… (title, artist, file)" />
+        <div class="count"><span id="shown">0</span>/<span id="total">0</span> tracks</div>
+      </div>
+
+      <ul id="musicList"></ul>
+    </div>
+
+    <footer>
+      Put your audio files in <code>/music/</code>. Edit the <code>tracks</code> list below or replace it with your own.
+    </footer>
+  </div>
+
+  <script>
+    // === 1) LIST YOUR FILES HERE ==========================================
+    // Put your songs in a folder named \/music next to this index.html.
+    // Then update this list with your own tracks.
+    // Only the 'src' is required; add 'title' and 'artist' if you like.
+    const tracks = [
+      { src: 'music/nodkrai.mp3', title: 'Nod-Krai', artist: 'Sumes (Genshin impact)' },
+      { src: 'music/example2.ogg', title: 'Example Song 2', artist: 'Unknown Artist' },
+      // { src: 'music/your-file.mp3', title: 'Your Title', artist: 'You' },
+    ];
+
+    // === 2) RENDER THE LIST ===============================================
+    const listEl = document.getElementById('musicList');
+    const shownEl = document.getElementById('shown');
+    const totalEl = document.getElementById('total');
+    const qEl = document.getElementById('q');
+    totalEl.textContent = tracks.length;
+
+    function fmtTime(seconds) {
+      if (!Number.isFinite(seconds)) return '';
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function makeItem(t) {
+      const li = document.createElement('li');
+      li.className = 'track';
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = t.title || t.src.split('/').pop();
+      const sub = document.createElement('div');
+      sub.className = 'sub';
+      sub.textContent = [t.artist || '—', t.src].join('  ·  ');
+      meta.append(title, sub);
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.preload = 'metadata';
+      audio.src = t.src;
+
+      const time = document.createElement('span');
+      time.className = 'sub';
+      time.textContent = '';
+
+      audio.addEventListener('loadedmetadata', () => {
+        time.textContent = fmtTime(audio.duration);
+      });
+
+      const dl = document.createElement('a');
+      dl.href = t.src; dl.download = '';
+      dl.textContent = 'Download';
+
+      actions.append(audio, time, dl);
+      li.append(meta, actions);
+      return li;
+    }
+
+    function render(query = '') {
+      listEl.innerHTML = '';
+      const q = query.trim().toLowerCase();
+      const filtered = tracks.filter(t => {
+        const hay = `${t.title||''} ${t.artist||''} ${t.src}`.toLowerCase();
+        return hay.includes(q);
+      });
+      filtered.forEach(t => listEl.appendChild(makeItem(t)));
+      shownEl.textContent = filtered.length;
+    }
+
+    render();
+
+    qEl.addEventListener('input', (e) => render(e.target.value));
+  </script>
+</body>
+</html>
