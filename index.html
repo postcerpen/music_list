@@ -93,17 +93,24 @@
   </div>
 
   <script>
-    // === 1) LIST YOUR FILES HERE ==========================================
-    // Put your songs in a folder named \/music next to this index.html.
-    // Then update this list with your own tracks.
-    // Only the 'src' is required; add 'title' and 'artist' if you like.
-    const tracks = [
-      { src: 'music/nodkrai.mp3', title: 'Nod-Krai', artist: 'Sumes (Genshin impact)' },
-      { src: 'music/example2.ogg', title: 'Example Song 2', artist: 'Unknown Artist' },
-      // { src: 'music/your-file.mp3', title: 'Your Title', artist: 'You' },
-    ];
+    // === 1) Define tracks with their JSON paths ================================
+  const tracks = [
+    { 
+      src: 'music/nodkrai.mp3', 
+      title: 'Nod-Krai', 
+      artist: 'Sumes (Genshin impact)', 
+      json: 'https://music-list-three.vercel.app/nodkrai.json' 
+    },
+    { 
+      src: 'music/moonhalo.mp3', 
+      title: 'Moon Halo', 
+      artist: 'Hoyomix', 
+      json: 'https://music-list-three.vercel.app/moonhalo.json' 
+    },
+    // { src: 'music/yourfile.mp3', title: '...', artist: '...', json: '...' }
+  ];
 
-    // === 2) RENDER THE LIST ===============================================
+
     const listEl = document.getElementById('musicList');
     const shownEl = document.getElementById('shown');
     const totalEl = document.getElementById('total');
@@ -147,11 +154,22 @@
         time.textContent = fmtTime(audio.duration);
       });
 
-      const dl = document.createElement('a');
-      dl.href = t.src; dl.download = '';
-      dl.textContent = 'Download';
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = "Copy JSON Text";
+      copyBtn.onclick = async () => {
+        try {
+          const res = await fetch(t.json);   // use track's own json link
+          const text = await res.text();
+          await navigator.clipboard.writeText(text);
+          alert(`Copied JSON for "${t.title}"`);
+        } catch (err) {
+          console.error("Copy failed:", err);
+          alert("Failed to copy JSON.");
+        }
+      };
 
-      actions.append(audio, time, dl);
+
+      actions.append(audio, time, copyBtn);
       li.append(meta, actions);
       return li;
     }
