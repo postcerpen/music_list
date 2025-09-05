@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godot Type Numbers Reference Card</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 3px solid #478cbf;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #478cbf;
+            padding-bottom: 20px;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #478cbf;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin: 10px 0 0 0;
+        }
+        
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .type-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #478cbf;
+            margin: 0 0 15px 0;
+            text-align: center;
+            background: #478cbf;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        
+        .type-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            margin: 3px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #478cbf;
+        }
+        
+        .type-number {
+            font-weight: bold;
+            color: #dc3545;
+            background: #fff5f5;
+            padding: 2px 8px;
+            border-radius: 3px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .type-name {
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        .highlight {
+            background: #fff3cd !important;
+            border-left-color: #ffc107 !important;
+        }
+        
+        .highlight .type-number {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .usage-example {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .usage-title {
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        .code {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+            margin: 5px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .print-button {
+            background: #478cbf;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .print-button:hover {
+            background: #3a7ca8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h1 class="title">🎮 GODOT typeof() REFERENCE</h1>
+            <p class="subtitle">Complete Type Numbers for typeof() function</p>
+        </div>
+        
+        <button class="print-button no-print" onclick="window.print()">🖨️ Print This Reference Card</button>
+        
+        <div class="type-grid">
+            <div class="type-section">
+                <div class="section-title">Basic Types</div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_NIL (null)</span>
+                    <span class="type-number">0</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_BOOL</span>
+                    <span class="type-number">1</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_INT</span>
+                    <span class="type-number">2</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_FLOAT</span>
+                    <span class="type-number">3</span>
+                </div>
+                <div class="type-item highlight">
+                    <span class="type-name">TYPE_STRING</span>
+                    <span class="type-number">4</span>
+                </div>
+            </div>
+            
+            <div class="type-section">
+                <div class="section-title">Vector Types</div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_VECTOR2</span>
+                    <span class="type-number">5</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_VECTOR2I</span>
+                    <span class="type-number">6</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_RECT2</span>
+                    <span class="type-number">7</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_RECT2I</span>
+                    <span class="type-number">8</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_VECTOR3</span>
+                    <span class="type-number">9</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_VECTOR3I</span>
+                    <span class="type-number">10</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_VECTOR4</span>
+                    <span class="type-number">12</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_VECTOR4I</span>
+                    <span class="type-number">13</span>
+                </div>
+            </div>
+            
+            <div class="type-section">
+                <div class="section-title">Transform Types</div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_TRANSFORM2D</span>
+                    <span class="type-number">11</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PLANE</span>
+                    <span class="type-number">14</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_QUATERNION</span>
+                    <span class="type-number">15</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_AABB</span>
+                    <span class="type-number">16</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_BASIS</span>
+                    <span class="type-number">17</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_TRANSFORM3D</span>
+                    <span class="type-number">18</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PROJECTION</span>
+                    <span class="type-number">19</span>
+                </div>
+            </div>
+            
+            <div class="type-section">
+                <div class="section-title">Advanced Types</div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_COLOR</span>
+                    <span class="type-number">20</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_STRING_NAME</span>
+                    <span class="type-number">21</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_NODE_PATH</span>
+                    <span class="type-number">22</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_RID</span>
+                    <span class="type-number">23</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_OBJECT</span>
+                    <span class="type-number">24</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_CALLABLE</span>
+                    <span class="type-number">25</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_SIGNAL</span>
+                    <span class="type-number">26</span>
+                </div>
+            </div>
+            
+            <div class="type-section">
+                <div class="section-title">📋 Collections (Most Used)</div>
+                <div class="type-item highlight">
+                    <span class="type-name">TYPE_DICTIONARY</span>
+                    <span class="type-number">27</span>
+                </div>
+                <div class="type-item highlight">
+                    <span class="type-name">TYPE_ARRAY</span>
+                    <span class="type-number">28</span>
+                </div>
+            </div>
+            
+            <div class="type-section">
+                <div class="section-title">Packed Arrays</div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_BYTE_ARRAY</span>
+                    <span class="type-number">29</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_INT32_ARRAY</span>
+                    <span class="type-number">30</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_INT64_ARRAY</span>
+                    <span class="type-number">31</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_FLOAT32_ARRAY</span>
+                    <span class="type-number">32</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_FLOAT64_ARRAY</span>
+                    <span class="type-number">33</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_STRING_ARRAY</span>
+                    <span class="type-number">34</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_VECTOR2_ARRAY</span>
+                    <span class="type-number">35</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_VECTOR3_ARRAY</span>
+                    <span class="type-number">36</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_COLOR_ARRAY</span>
+                    <span class="type-number">37</span>
+                </div>
+                <div class="type-item">
+                    <span class="type-name">TYPE_PACKED_VECTOR4_ARRAY</span>
+                    <span class="type-number">38</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="usage-example">
+            <div class="usage-title">💡 Usage Examples:</div>
+            <div class="code">var my_string = "ancok"<br>print(typeof(my_string))  # Returns: 4</div>
+            <div class="code">var my_dict = {"key": "value"}<br>print(typeof(my_dict))    # Returns: 27</div>
+            <div class="code">var my_array = [1, 2, 3]<br>print(typeof(my_array))   # Returns: 28</div>
+            <div class="code">if typeof(data) == TYPE_DICTIONARY:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("It's a dictionary!")</div>
+        </div>
+        
+        <div class="footer">
+            <strong>Source:</strong> Godot Engine Official Documentation (@GlobalScope - Variant.Type)<br>
+            <strong>Version:</strong> Godot 4.x | <strong>Reference:</strong> docs.godotengine.org
+        </div>
+    </div>
+</body>
+</html>
