@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godot Data Storage Guide</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                font-size: 12pt;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .page-break {
+                page-break-after: always;
+            }
+            
+            a {
+                color: black !important;
+                text-decoration: underline !important;
+            }
+            
+            code {
+                background: #f8f8f8 !important;
+                border: 1px solid #ddd !important;
+            }
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #478cbf;
+        }
+
+        h1 {
+            color: #478cbf;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Controls */
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #478cbf;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #366f99;
+        }
+
+        /* Content Sections */
+        section {
+            background: white;
+            margin-bottom: 30px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #478cbf;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        h3 {
+            color: #366f99;
+            margin: 25px 0 15px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .code-comment {
+            color: #75715e;
+        }
+
+        .code-keyword {
+            color: #66d9ef;
+        }
+
+        .code-string {
+            color: #e6db74;
+        }
+
+        .code-number {
+            color: #ae81ff;
+        }
+
+        .code-function {
+            color: #a6e22e;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* TOC */
+        .toc {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+        }
+
+        .toc ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #478cbf;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Godot Data Storage Guide</h1>
+        <p class="subtitle">Dictionaries, JSON, Arrays, and Storage Methods</p>
+    </header>
+
+    <div class="controls no-print">
+        <div>
+            <button class="btn" onclick="window.print()">Print Guide</button>
+            <button class="btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        </div>
+        <div>
+            <button class="btn" onclick="scrollToTop()">Back to Top</button>
+        </div>
+    </div>
+
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#arrays">Arrays</a></li>
+            <li><a href="#dictionaries">Dictionaries</a></li>
+            <li><a href="#json">JSON</a></li>
+            <li><a href="#files">File Storage</a></li>
+            <li><a href="#config">Config Files</a></li>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#best-practices">Best Practices</a></li>
+        </ul>
+    </div>
+
+    <section id="intro">
+        <h2>Introduction</h2>
+        <p>This guide covers various data storage and manipulation techniques in Godot Engine. Understanding these concepts is crucial for game development, as you'll need to store player data, game states, settings, and more.</p>
+        <p>We'll explore arrays, dictionaries, JSON, file operations, and other storage methods with practical examples.</p>
+    </section>
+
+    <section id="arrays">
+        <h2>Arrays</h2>
+        <p>Arrays are ordered collections of values. In Godot, you can create arrays using the Array class or the shorthand syntax.</p>
+        
+        <h3>Creating Arrays</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Empty array</span>
+<span class="code-keyword">var</span> my_array = []
+
+<span class="code-comment"># Array with values</span>
+<span class="code-keyword">var</span> numbers = [<span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>, <span class="code-number">4</span>, <span class="code-number">5</span>]
+<span class="code-keyword">var</span> strings = [<span class="code-string">"apple"</span>, <span class="code-string">"banana"</span>, <span class="code-string">"cherry"</span>]
+<span class="code-keyword">var</span> mixed = [<span class="code-number">1</span>, <span class="code-string">"hello"</span>, <span class="code-keyword">true</span>, <span class="code-number">3.14</span>]
+
+<span class="code-comment"># Using Array constructor</span>
+<span class="code-keyword">var</span> arr = <span class="code-function">Array</span>()</pre>
+        </div>
+
+        <h3>Common Array Operations</h3>
+        <div class="code-block">
+<pre><span class="code-keyword">var</span> fruits = [<span class="code-string">"apple"</span>, <span class="code-string">"banana"</span>]
+
+<span class="code-comment"># Add elements</span>
+fruits.<span class="code-function">append</span>(<span class="code-string">"cherry"</span>)  <span class="code-comment"># ["apple", "banana", "cherry"]</span>
+fruits.<span class="code-function">push_back</span>(<span class="code-string">"date"</span>) <span class="code-comment"># ["apple", "banana", "cherry", "date"]</span>
+
+<span class="code-comment"># Remove elements</span>
+fruits.<span class="code-function">remove</span>(<span class="code-number">1</span>)  <span class="code-comment"># Remove at index 1: ["apple", "cherry", "date"]</span>
+<span class="code-keyword">var</span> last = fruits.<span class="code-function">pop_back</span>()  <span class="code-comment"># last = "date", fruits = ["apple", "cherry"]</span>
+
+<span class="code-comment"># Access elements</span>
+<span class="code-keyword">var</span> first = fruits[<span class="code-number">0</span>]  <span class="code-comment"># "apple"</span>
+fruits[<span class="code-number">1</span>] = <span class="code-string">"blueberry"</span>  <span class="code-comment"># ["apple", "blueberry"]</span>
+
+<span class="code-comment"># Array size</span>
+<span class="code-keyword">var</span> size = fruits.<span class="code-function">size</span>()  <span class="code-comment"># 2</span>
+
+<span class="code-comment"># Check if array contains value</span>
+<span class="code-keyword">var</span> has_apple = fruits.<span class="code-function">has</span>(<span class="code-string">"apple"</span>)  <span class="code-comment"># true</span>
+
+<span class="code-comment"># Iterate through array</span>
+<span class="code-keyword">for</span> fruit <span class="code-keyword">in</span> fruits:
+    <span class="code-function">print</span>(fruit)</pre>
+        </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section id="dictionaries">
+        <h2>Dictionaries</h2>
+        <p>Dictionaries are collections of key-value pairs. They're similar to objects in JavaScript or dictionaries in Python.</p>
+        
+        <h3>Creating Dictionaries</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Empty dictionary</span>
+<span class="code-keyword">var</span> my_dict = {}
+
+<span class="code-comment"># Dictionary with values</span>
+<span class="code-keyword">var</span> player = {
+    <span class="code-string">"name"</span>: <span class="code-string">"John"</span>,
+    <span class="code-string">"health"</span>: <span class="code-number">100</span>,
+    <span class="code-string">"level"</span>: <span class="code-number">5</span>,
+    <span class="code-string">"inventory"</span>: [<span class="code-string">"sword"</span>, <span class="code-string">"potion"</span>]
+}
+
+<span class="code-comment"># Using Dictionary constructor</span>
+<span class="code-keyword">var</span> dict = <span class="code-function">Dictionary</span>()</pre>
+        </div>
+
+        <h3>Common Dictionary Operations</h3>
+        <div class="code-block">
+<pre><span class="code-keyword">var</span> character = {
+    <span class="code-string">"name"</span>: <span class="code-string">"Alice"</span>,
+    <span class="code-string">"health"</span>: <span class="code-number">100</span>
+}
+
+<span class="code-comment"># Add/update values</span>
+character[<span class="code-string">"level"</span>] = <span class="code-number">3</span>
+character.<span class="code-function">erase</span>(<span class="code-string">"health"</span>)  <span class="code-comment"># Remove key</span>
+
+<span class="code-comment"># Access values</span>
+<span class="code-keyword">var</span> name = character[<span class="code-string">"name"</span>]
+<span class="code-keyword">var</span> level = character.<span class="code-function">get</span>(<span class="code-string">"level"</span>, <span class="code-number">1</span>)  <span class="code-comment"># Get with default value</span>
+
+<span class="code-comment"># Check if key exists</span>
+<span class="code-keyword">if</span> character.<span class="code-function">has</span>(<span class="code-string">"name"</span>):
+    <span class="code-function">print</span>(<span class="code-string">"Has name key"</span>)
+
+<span class="code-comment"># Dictionary size</span>
+<span class="code-keyword">var</span> size = character.<span class="code-function">size</span>()
+
+<span class="code-comment"># Get all keys or values</span>
+<span class="code-keyword">var</span> keys = character.<span class="code-function">keys</span>()
+<span class="code-keyword">var</span> values = character.<span class="code-function">values</span>()
+
+<span class="code-comment"># Iterate through dictionary</span>
+<span class="code-keyword">for</span> key <span class="code-keyword">in</span> character:
+    <span class="code-function">print</span>(key + <span class="code-string">": "</span> + <span class="code-function">str</span>(character[key]))</pre>
+        </div>
+    </section>
+
+    <section id="json">
+        <h2>Working with JSON</h2>
+        <p>JSON (JavaScript Object Notation) is a lightweight data interchange format. Godot has built-in support for parsing and generating JSON.</p>
+        
+        <h3>Parsing JSON</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># JSON string to Dictionary</span>
+<span class="code-keyword">var</span> json_string = <span class="code-string">'{"name": "John", "age": 30, "city": "New York"}'</span>
+<span class="code-keyword">var</span> json = <span class="code-function">JSON</span>()
+<span class="code-keyword">var</span> parse_result = json.<span class="code-function">parse</span>(json_string)
+
+<span class="code-keyword">if</span> parse_result == OK:
+    <span class="code-keyword">var</span> data = json.<span class="code-function">get_data</span>()
+    <span class="code-function">print</span>(data[<span class="code-string">"name"</span>])  <span class="code-comment"># "John"</span>
+<span class="code-keyword">else</span>:
+    <span class="code-function">print</span>(<span class="code-string">"JSON parse error"</span>)</pre>
+        </div>
+
+        <h3>Generating JSON</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Dictionary to JSON string</span>
+<span class="code-keyword">var</span> data = {
+    <span class="code-string">"player_name"</span>: <span class="code-string">"Alice"</span>,
+    <span class="code-string">"score"</span>: <span class="code-number">1500</span>,
+    <span class="code-string">"items"</span>: [<span class="code-string">"sword"</span>, <span class="code-string">"shield"</span>]
+}
+
+<span class="code-keyword">var</span> json_string = <span class="code-function">JSON</span>().<span class="code-function">stringify</span>(data)
+<span class="code-function">print</span>(json_string)
+<span class="code-comment"># Output: {"player_name":"Alice","score":1500,"items":["sword","shield"]}</span></pre>
+        </div>
+
+        <h3>JSON Example for Game Save</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Save game data to JSON</span>
+<span class="code-keyword">func</span> save_game():
+    <span class="code-keyword">var</span> save_data = {
+        <span class="code-string">"player"</span>: {
+            <span class="code-string">"name"</span>: player_name,
+            <span class="code-string">"health"</span>: player_health,
+            <span class="code-string">"level"</span>: player_level,
+            <span class="code-string">"position"</span>: {
+                <span class="code-string">"x"</span>: player_position.x,
+                <span class="code-string">"y"</span>: player_position.y
+            }
+        },
+        <span class="code-string">"inventory"</span>: player_inventory,
+        <span class="code-string">"settings"</span>: game_settings
+    }
+    
+    <span class="code-keyword">var</span> file = <span class="code-function">FileAccess</span>.<span class="code-function">open</span>(<span class="code-string">"user://savegame.json"</span>, <span class="code-function">FileAccess</span>.WRITE)
+    file.<span class="code-function">store_string</span>(<span class="code-function">JSON</span>().<span class="code-function">stringify</span>(save_data))
+    file.<span class="code-function">close</span>()
+
+<span class="code-comment"># Load game data from JSON</span>
+<span class="code-keyword">func</span> load_game():
+    <span class="code-keyword">var</span> file = <span class="code-function">FileAccess</span>.<span class="code-function">open</span>(<span class="code-string">"user://savegame.json"</span>, <span class="code-function">FileAccess</span>.READ)
+    <span class="code-keyword">if</span> file:
+        <span class="code-keyword">var</span> json = <span class="code-function">JSON</span>()
+        <span class="code-keyword">var</span> parse_result = json.<span class="code-function">parse</span>(file.<span class="code-function">get_as_text</span>())
+        <span class="code-keyword">if</span> parse_result == OK:
+            <span class="code-keyword">var</span> save_data = json.<span class="code-function">get_data</span>()
+            <span class="code-comment"># Restore game state from save_data</span>
+            player_name = save_data[<span class="code-string">"player"</span>][<span class="code-string">"name"</span>]
+            player_health = save_data[<span class="code-string">"player"</span>][<span class="code-string">"health"</span>]
+            <span class="code-comment"># ... and so on</span></pre>
+        </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section id="files">
+        <h2>File Storage</h2>
+        <p>Godot provides several ways to work with files for data persistence.</p>
+        
+        <h3>Basic File Operations</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Write to file</span>
+<span class="code-keyword">func</span> save_to_file(path, content):
+    <span class="code-keyword">var</span> file = <span class="code-function">FileAccess</span>.<span class="code-function">open</span>(path, <span class="code-function">FileAccess</span>.WRITE)
+    file.<span class="code-function">store_string</span>(content)
+    file.<span class="code-function">close</span>()
+
+<span class="code-comment"># Read from file</span>
+<span class="code-keyword">func</span> read_from_file(path):
+    <span class="code-keyword">var</span> file = <span class="code-function">FileAccess</span>.<span class="code-function">open</span>(path, <span class="code-function">FileAccess</span>.READ)
+    <span class="code-keyword">if</span> file:
+        <span class="code-keyword">var</span> content = file.<span class="code-function">get_as_text</span>()
+        file.<span class="code-function">close</span>()
+        <span class="code-keyword">return</span> content
+    <span class="code-keyword">return</span> <span class="code-string">""</span>
+
+<span class="code-comment"># Check if file exists</span>
+<span class="code-keyword">func</span> file_exists(path):
+    <span class="code-keyword">return</span> <span class="code-function">FileAccess</span>.<span class="code-function">file_exists</span>(path)</pre>
+        </div>
+
+        <h3>Special File Paths</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Path</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>"res://"</td>
+                    <td>Read-only resource path (included with game)</td>
+                </tr>
+                <tr>
+                    <td>"user://"</td>
+                    <td>User data path (for saves, settings, etc.)</td>
+                </tr>
+                <tr>
+                    <td>"user://saves/"</td>
+                    <td>Good practice to organize saves in a folder</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Working with Directories</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Create directory</span>
+<span class="code-keyword">var</span> dir = <span class="code-function">DirAccess</span>.<span class="code-function">open</span>(<span class="code-string">"user://saves"</span>)
+<span class="code-keyword">if</span> !dir:
+    dir = <span class="code-function">DirAccess</span>.<span class="code-function">make_dir_recursive_absolute</span>(<span class="code-string">"user://saves"</span>)
+
+<span class="code-comment"># List files in directory</span>
+<span class="code-keyword">func</span> list_save_files():
+    <span class="code-keyword">var</span> saves = []
+    <span class="code-keyword">var</span> dir = <span class="code-function">DirAccess</span>.<span class="code-function">open</span>(<span class="code-string">"user://saves"</span>)
+    <span class="code-keyword">if</span> dir:
+        dir.<span class="code-function">list_dir_begin</span>()
+        <span class="code-keyword">var</span> file_name = dir.<span class="code-function">get_next</span>()
+        <span class="code-keyword">while</span> file_name != <span class="code-string">""</span>:
+            <span class="code-keyword">if</span> !dir.<span class="code-function">current_is_dir</span>() <span class="code-keyword">and</span> file_name.<span class="code-function">ends_with</span>(<span class="code-string">".json"</span>):
+                saves.<span class="code-function">append</span>(file_name)
+            file_name = dir.<span class="code-function">get_next</span>()
+    <span class="code-keyword">return</span> saves</pre>
+        </div>
+    </section>
+
+    <section id="config">
+        <h2>Config Files</h2>
+        <p>Godot's ConfigFile class provides an easy way to store settings and configuration data.</p>
+        
+        <h3>Using ConfigFile</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Save settings</span>
+<span class="code-keyword">func</span> save_settings():
+    <span class="code-keyword">var</span> config = <span class="code-function">ConfigFile</span>()
+    
+    <span class="code-comment"># Store values</span>
+    config.<span class="code-function">set_value</span>(<span class="code-string">"audio"</span>, <span class="code-string">"master_volume"</span>, <span class="code-number">0.8</span>)
+    config.<span class="code-function">set_value</span>(<span class="code-string">"audio"</span>, <span class="code-string">"music_volume"</span>, <span class="code-number">0.6</span>)
+    config.<span class="code-function">set_value</span>(<span class="code-string">"graphics"</span>, <span class="code-string">"fullscreen"</span>, <span class="code-keyword">true</span>)
+    config.<span class="code-function">set_value</span>(<span class="code-string">"gameplay"</span>, <span class="code-string">"difficulty"</span>, <span class="code-string">"normal"</span>)
+    
+    <span class="code-comment"># Save to file</span>
+    config.<span class="code-function">save</span>(<span class="code-string">"user://settings.cfg"</span>)
+
+<span class="code-comment"># Load settings</span>
+<span class="code-keyword">func</span> load_settings():
+    <span class="code-keyword">var</span> config = <span class="code-function">ConfigFile</span>()
+    <span class="code-keyword">var</span> error = config.<span class="code-function">load</span>(<span class="code-string">"user://settings.cfg"</span>)
+    
+    <span class="code-keyword">if</span> error == OK:
+        <span class="code-comment"># Get values with defaults</span>
+        master_volume = config.<span class="code-function">get_value</span>(<span class="code-string">"audio"</span>, <span class="code-string">"master_volume"</span>, <span class="code-number">1.0</span>)
+        music_volume = config.<span class="code-function">get_value</span>(<span class="code-string">"audio"</span>, <span class="code-string">"music_volume"</span>, <span class="code-number">1.0</span>)
+        fullscreen = config.<span class="code-function">get_value</span>(<span class="code-string">"graphics"</span>, <span class="code-string">"fullscreen"</span>, <span class="code-keyword">false</span>)
+        difficulty = config.<span class="code-function">get_value</span>(<span class="code-string">"gameplay"</span>, <span class="code-string">"difficulty"</span>, <span class="code-string">"easy"</span>)</pre>
+        </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section id="resources">
+        <h2>Custom Resources</h2>
+        <p>Godot's Resource system allows you to create custom data types that can be saved and loaded like built-in resources.</p>
+        
+        <h3>Creating a Custom Resource</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># player_data.gd</span>
+<span class="code-keyword">extends</span> Resource
+<span class="code-keyword">class_name</span> PlayerData
+
+<span class="code-keyword">@export</span> <span class="code-keyword">var</span> player_name: String = <span class="code-string">""</span>
+<span class="code-keyword">@export</span> <span class="code-keyword">var</span> level: <span class="code-keyword">int</span> = <span class="code-number">1</span>
+<span class="code-keyword">@export</span> <span class="code-keyword">var</span> experience: <span class="code-keyword">int</span> = <span class="code-number">0</span>
+<span class="code-keyword">@export</span> <span class="code-keyword">var</span> inventory: <span class="code-keyword">Array</span>[String] = []</pre>
+        </div>
+
+        <h3>Using Custom Resources</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Create and save resource</span>
+<span class="code-keyword">func</span> save_player_data():
+    <span class="code-keyword">var</span> player_data = <span class="code-function">PlayerData</span>.new()
+    player_data.player_name = <span class="code-string">"Hero"</span>
+    player_data.level = <span class="code-number">5</span>
+    player_data.experience = <span class="code-number">1250</span>
+    player_data.inventory = [<span class="code-string">"sword"</span>, <span class="code-string">"potion"</span>, <span class="code-string">"key"</span>]
+    
+    <span class="code-function">ResourceSaver</span>.<span class="code-function">save</span>(player_data, <span class="code-string">"user://player_data.tres"</span>)
+
+<span class="code-comment"># Load resource</span>
+<span class="code-keyword">func</span> load_player_data():
+    <span class="code-keyword">if</span> <span class="code-function">ResourceLoader</span>.<span class="code-function">exists</span>(<span class="code-string">"user://player_data.tres"</span>):
+        <span class="code-keyword">var</span> player_data = <span class="code-function">ResourceLoader</span>.<span class="code-function">load</span>(<span class="code-string">"user://player_data.tres"</span>)
+        <span class="code-function">print</span>(player_data.player_name)  <span class="code-comment"># "Hero"</span>
+        <span class="code-function">print</span>(player_data.level)        <span class="code-comment"># 5</span></pre>
+        </div>
+    </section>
+
+    <section id="best-practices">
+        <h2>Best Practices</h2>
+        
+        <h3>Error Handling</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Always check for errors when working with files</span>
+<span class="code-keyword">func</span> safe_save(path, data):
+    <span class="code-keyword">var</span> file = <span class="code-function">FileAccess</span>.<span class="code-function">open</span>(path, <span class="code-function">FileAccess</span>.WRITE)
+    <span class="code-keyword">if</span> file:
+        file.<span class="code-function">store_string</span>(data)
+        file.<span class="code-function">close</span>()
+        <span class="code-keyword">return</span> <span class="code-keyword">true</span>
+    <span class="code-keyword">else</span>:
+        <span class="code-function">push_error</span>(<span class="code-string">"Failed to save file: "</span> + path)
+        <span class="code-keyword">return</span> <span class="code-keyword">false</span></pre>
+        </div>
+
+        <h3>Data Validation</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Validate data before saving</span>
+<span class="code-keyword">func</span> validate_player_data(data):
+    <span class="code-keyword">if</span> !data.<span class="code-function">has</span>(<span class="code-string">"name"</span>) <span class="code-keyword">or</span> data[<span class="code-string">"name"</span>] == <span class="code-string">""</span>:
+        <span class="code-keyword">return</span> <span class="code-keyword">false</span>
+    <span class="code-keyword">if</span> !data.<span class="code-function">has</span>(<span class="code-string">"health"</span>) <span class="code-keyword">or</span> data[<span class="code-string">"health"</span>] &lt; <span class="code-number">0</span>:
+        <span class="code-keyword">return</span> <span class="code-keyword">false</span>
+    <span class="code-keyword">return</span> <span class="code-keyword">true</span></pre>
+        </div>
+
+        <h3>Backup System</h3>
+        <div class="code-block">
+<pre><span class="code-comment"># Create backup before saving</span>
+<span class="code-keyword">func</span> safe_save_with_backup(path, data):
+    <span class="code-comment"># Create backup if file exists</span>
+    <span class="code-keyword">if</span> <span class="code-function">FileAccess</span>.<span class="code-function">file_exists</span>(path):
+        <span class="code-keyword">var</span> backup_path = path + <span class="code-string">".backup"</span>
+        <span class="code-function">DirAccess</span>.<span class="code-function">rename_absolute</span>(path, backup_path)
+    
+    <span class="code-comment"># Save new file</span>
+    <span class="code-keyword">return</span> <span class="code-function">safe_save</span>(path, data)</pre>
+        </div>
+    </section>
+
+    <footer>
+        <p>Godot Data Storage Guide &copy; 2023 | Created for Godot Engine Developers</p>
+    </footer>
+
+    <script>
+        // JavaScript for interactive features
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            
+            // Add dark mode styles dynamically
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.style.backgroundColor = '#1a1a1a';
+                document.body.style.color = '#ffffff';
+                
+                // Update section backgrounds
+                const sections = document.querySelectorAll('section');
+                sections.forEach(section => {
+                    section.style.backgroundColor = '#2d2d2d';
+                    section.style.color = '#ffffff';
+                });
+                
+                // Update code blocks
+                const codeBlocks = document.querySelectorAll('.code-block');
+                codeBlocks.forEach(block => {
+                    block.style.backgroundColor = '#1a1a1a';
+                });
+            } else {
+                document.body.style.backgroundColor = '#f5f5f5';
+                document.body.style.color = '#333';
+                
+                const sections = document.querySelectorAll('section');
+                sections.forEach(section => {
+                    section.style.backgroundColor = 'white';
+                    section.style.color = '#333';
+                });
+                
+                const codeBlocks = document.querySelectorAll('.code-block');
+                codeBlocks.forEach(block => {
+                    block.style.backgroundColor = '#2d2d2d';
+                });
+            }
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Add smooth scrolling for TOC links
+        document.querySelectorAll('.toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
